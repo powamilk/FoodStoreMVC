@@ -1,0 +1,66 @@
+﻿@model FoodStoreMVC.Models.Order
+
+@{
+    ViewData["Title"] = "Edit Order";
+    var orderItems = Model.OrderItems.ToList();
+}
+
+<h2>Edit Order</h2>
+
+<form asp-action="Edit" method="post">
+    <input type="hidden" asp-for="Id" />
+    <div class="form-group">
+        <label asp-for="CustomerId" class="control-label"></label>
+        <input asp-for="CustomerId" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="OrderDate" class="control-label"></label>
+        <input asp-for="OrderDate" class="form-control" />
+    </div>
+
+    <h4>Order Items</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody id="orderItems">
+            @for (int i = 0; i < orderItems.Count; i++)
+            {
+                <tr>
+                    <td>
+                        <select name="orderItems[@i].ProductId" class="form-control" asp-items="ViewBag.Products"
+                                value="@orderItems[i].ProductId"></select>
+                    </td>
+                    <td>
+                        <input name="orderItems[@i].Quantity" type="number" class="form-control" value="@orderItems[i].Quantity" />
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button type="button" id="addItem" class="btn btn-secondary">Add Item</button>
+    <button type="submit" class="btn btn-primary">Save Changes</button>
+</form>
+
+@section Scripts {
+    <script>
+        var index = @orderItems.Count;
+
+        $('#addItem').click(function () {
+            var row = `<tr>
+                                    <td>
+                                        <select name="orderItems[${index}].ProductId" class="form-control" asp-items="ViewBag.Products"></select>
+                                    </td>
+                                    <td>
+                                        <input name="orderItems[${index}].Quantity" type="number" class="form-control" />
+                                    </td>
+                                </tr>`;
+            $('#orderItems').append(row);
+            index++;
+        });
+    </script>
+}

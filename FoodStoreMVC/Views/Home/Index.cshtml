@@ -1,0 +1,14 @@
+﻿@{
+    ViewData["Title"] = "Trang chủ";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Chào mừng đến với Hệ Thống Quản Lý Cửa Hàng Thực Phẩm</h1>
+    <p>Quản lý danh mục, sản phẩm và đơn hàng hiệu quả với hệ thống của chúng tôi.</p>
+
+    <div>
+        <a class="btn btn-primary" asp-controller="Category" asp-action="Index">Xem Danh mục</a>
+        <a class="btn btn-primary" asp-controller="Product" asp-action="Index">Xem Sản phẩm</a>
+        <a class="btn btn-primary" asp-controller="Order" asp-action="Index">Xem Đơn hàng</a>
+    </div>
+</div>

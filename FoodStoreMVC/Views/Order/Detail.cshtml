@@ -1,0 +1,52 @@
+﻿@model FoodStoreMVC.Models.Order
+
+@{
+    ViewData["Title"] = "Order Details";
+}
+
+<h2>Order Details</h2>
+
+<div class="form-group">
+    <label>Order ID</label>
+    <p class="form-control-static">@Model.Id</p>
+</div>
+
+<div class="form-group">
+    <label>Customer ID</label>
+    <p class="form-control-static">@Model.CustomerId</p>
+</div>
+
+<div class="form-group">
+    <label>Order Date</label>
+    <p class="form-control-static">@Model.OrderDate.ToString("yyyy-MM-dd")</p>
+</div>
+
+<div class="form-group">
+    <label>Total Amount</label>
+    <p class="form-control-static">@Model.TotalAmount.ToString("C")</p>
+</div>
+
+<h3>Order Items</h3>
+<table class="table">
+    <thead>
+        <tr>
+            <th>Product Name</th>
+            <th>Quantity</th>
+            <th>Price</th>
+            <th>Total</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var item in Model.OrderItems)
+        {
+            <tr>
+                <td>@item.Product.Name</td>
+                <td>@item.Quantity</td>
+                <td>@item.Product.Price.ToString("C")</td>
+                <td>@(item.Quantity * item.Product.Price).ToString("C")</td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+<a asp-action="Index" class="btn btn-secondary">Back to Orders List</a>

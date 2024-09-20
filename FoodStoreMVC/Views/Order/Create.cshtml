@@ -1,0 +1,60 @@
+﻿@model FoodStoreMVC.Models.Order
+
+@{
+    ViewData["Title"] = "Tạo Order";
+}
+
+<h2>Create Order</h2>
+
+<form asp-action="Create" method="post">
+    <div class="form-group">
+        <label asp-for="CustomerId" class="control-label"></label>
+        <input asp-for="CustomerId" class="form-control" />
+    </div>
+    <div class="form-group">
+        <label asp-for="OrderDate" class="control-label"></label>
+        <input asp-for="OrderDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+    </div>
+
+    <h4>Order Items</h4>
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Product</th>
+                <th>Quantity</th>
+            </tr>
+        </thead>
+        <tbody id="orderItems">
+            <tr>
+                <td>
+                    <select name="orderItems[0].ProductId" class="form-control" asp-items="ViewBag.Products"></select>
+                </td>
+                <td>
+                    <input name="orderItems[0].Quantity" type="number" class="form-control" />
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+    <button type="button" id="addItem" class="btn btn-secondary">Add Item</button>
+    <button type="submit" class="btn btn-primary">Create</button>
+</form>
+
+@section Scripts {
+    <script>
+        var index = 1;
+
+        $('#addItem').click(function() {
+            var row = `<tr>
+                            <td>
+                                <select name="orderItems[${index}].ProductId" class="form-control" asp-items="ViewBag.Products"></select>
+                            </td>
+                            <td>
+                                <input name="orderItems[${index}].Quantity" type="number" class="form-control" />
+                            </td>
+                        </tr>`;
+            $('#orderItems').append(row);
+            index++;
+        });
+    </script>
+}

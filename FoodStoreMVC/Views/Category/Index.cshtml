@@ -1,0 +1,42 @@
+﻿@model IEnumerable<FoodStoreMVC.Models.Category>
+
+<@{
+    ViewData["Title"] = "Danh sách danh mục";
+}
+
+<h1>Danh sách danh mục</h1>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Thêm Danh Mục</a>
+</p>
+
+@if (Model != null && Model.Any())
+{
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Tên Danh Mục</th>
+                    <th>Mô Tả</th>
+                    <th>Hành Động</th>
+                </tr>
+            </thead>
+            <tbody>
+            @foreach (var item in Model)
+            {
+                        <tr>
+                            <td>@item.Name</td>
+                            <td>@item.Description</td>
+                            <td>
+                                <a asp-action="Edit" asp-route-id="@item.Id">Sửa</a> |
+                                <a asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
+                            </td>
+                        </tr>
+            }
+            </tbody>
+        </table>
+}
+else
+{
+        <p>Không có dữ liệu để hiển thị.</p>
+}
+
