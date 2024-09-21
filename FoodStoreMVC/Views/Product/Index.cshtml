@@ -1,37 +1,38 @@
-﻿@model IEnumerable<FoodStoreMVC.Models.Product>
+﻿@model IEnumerable<Product>
 
 @{
     ViewData["Title"] = "Danh sách sản phẩm";
 }
 
-<h2>Products List</h2>
+<h2>Danh sách sản phẩm</h2>
+
+<p>
+    <a class="btn btn-primary" asp-action="Create">Thêm sản phẩm</a>
+</p>
 
 <table class="table">
     <thead>
         <tr>
-            <th>Name</th>
-            <th>Price</th>
-            <th>Stock</th>
-            <th>Category</th>
-            <th>Actions</th>
+            <th>Tên sản phẩm</th>
+            <th>Giá</th>
+            <th>Số lượng</th>
+            <th>Danh mục</th>
+            <th>Thao tác</th>
         </tr>
     </thead>
     <tbody>
-        @foreach (var product in Model)
+        @foreach (var item in Model)
         {
             <tr>
-                <td>@product.Name</td>
-                <td>@product.Price.ToString("C")</td>
-                <td>@product.Stock</td>
-                <td>@product.Category.Name</td>
+                <td>@item.Name</td>
+                <td>@item.Price</td>
+                <td>@item.Stock</td>
+                <td>@item.Category.Name</td>
                 <td>
-                    <a asp-action="Details" asp-route-id="@product.Id" class="btn btn-info">Details</a>
-                    <a asp-action="Edit" asp-route-id="@product.Id" class="btn btn-warning">Edit</a>
-                    <a asp-action="Delete" asp-route-id="@product.Id" class="btn btn-danger">Delete</a>
+                    <a asp-action="Edit" asp-route-id="@item.Id">Sửa</a> |
+                    <a asp-action="Delete" asp-route-id="@item.Id">Xóa</a>
                 </td>
             </tr>
         }
     </tbody>
 </table>
-
-<a asp-action="Create" class="btn btn-primary">Create New Product</a>

@@ -6,8 +6,8 @@ namespace FoodStoreMVC.Service.Interface
     {
         Task<List<Category>> GetAllCategoriesAsync();
         Task<Category> GetCategoryByIdAsync(int id);
-        Task CreateCategoryAsync(Category category);
-        Task UpdateCategoryAsync(Category category);
-        Task DeleteCategoryAsync(int id);
+        Task<bool> CreateCategoryAsync(Category category);
+        Task<bool> UpdateCategoryAsync(Category category);
+        Task<bool> DeleteCategoryAsync(int id);
     }
 }

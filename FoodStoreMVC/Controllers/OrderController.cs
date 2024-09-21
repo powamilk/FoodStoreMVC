@@ -8,118 +8,93 @@ namespace FoodStoreMVC.Controllers
 {
     public class OrderController : Controller
     {
-        private readonly AppDbContext _context;
+        private readonly IOrderService _orderService;
 
-        public OrderController(AppDbContext context)
+        public OrderController(IOrderService orderService)
         {
-            _context = context;
+            _orderService = orderService;
         }
+
         public async Task<IActionResult> Index()
         {
-            var orders = await _context.Orders
-                                       .Include(o => o.OrderItems)
-                                       .ThenInclude(oi => oi.Product)
-                                       .ToListAsync();
+            var orders = await _orderService.GetAllOrdersAsync();
             return View(orders);
         }
+
+        public async Task<IActionResult> Details(int id)
+        {
+            var order = await _orderService.GetOrderByIdAsync(id);
+            if (order == null)
+            {
+                return NotFound();
+            }
+            return View(order);
+        }
+
         public IActionResult Create()
         {
-            ViewBag.Products = new SelectList(_context.Products, "Id", "Name");
             return View();
         }
 
         [HttpPost]
-        public async Task<IActionResult> Create(Order order, List<OrderItem> orderItems)
+        public async Task<IActionResult> Create(Order order)
         {
             if (ModelState.IsValid)
             {
-                decimal totalAmount = 0;
-
-                foreach (var item in orderItems)
+                var result = await _orderService.CreateOrderAsync(order);
+                if (result)
                 {
-                    var product = await _context.Products.FindAsync(item.ProductId);
-                    if (product != null)
-                    {
-                        item.Product = product;
-                        item.Order = order;
-                        totalAmount += item.Quantity * product.Price;
-                    }
+                    return RedirectToAction(nameof(Index));
                 }
-
-                order.TotalAmount = totalAmount;
-                order.OrderItems = orderItems;
-
-                _context.Orders.Add(order);
-                await _context.SaveChangesAsync();
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Không thể tạo đơn hàng");
             }
-
-            ViewBag.Products = new SelectList(_context.Products, "Id", "Name");
             return View(order);
         }
+
         public async Task<IActionResult> Edit(int id)
         {
-            var order = await _context.Orders
-                                      .Include(o => o.OrderItems)
-                                      .FirstOrDefaultAsync(o => o.Id == id);
+            var order = await _orderService.GetOrderByIdAsync(id);
             if (order == null)
             {
                 return NotFound();
             }
-
-            ViewBag.Products = new SelectList(_context.Products, "Id", "Name");
             return View(order);
         }
 
         [HttpPost]
-        public async Task<IActionResult> Edit(int id, Order order, List<OrderItem> orderItems)
+        public async Task<IActionResult> Edit(Order order)
         {
             if (ModelState.IsValid)
             {
-                var existingOrder = await _context.Orders
-                    .Include(o => o.OrderItems)
-                    .FirstOrDefaultAsync(o => o.Id == id);
-
-                if (existingOrder == null) return NotFound();
-
-                _context.OrderItems.RemoveRange(existingOrder.OrderItems);
-
-                decimal totalAmount = 0;
-
-                foreach (var item in orderItems)
+                var result = await _orderService.UpdateOrderAsync(order);
+                if (result)
                 {
-                    var product = await _context.Products.FindAsync(item.ProductId);
-                    if (product != null)
-                    {
-                        item.Product = product;
-                        item.Order = existingOrder;
-                        totalAmount += item.Quantity * product.Price;
-                    }
+                    return RedirectToAction(nameof(Index));
                 }
-
-                existingOrder.OrderItems = orderItems;
-                existingOrder.TotalAmount = totalAmount;
-
-                _context.Orders.Update(existingOrder);
-                await _context.SaveChangesAsync();
-
-                return RedirectToAction(nameof(Index));
+                ModelState.AddModelError("", "Không thể sửa đơn hàng");
             }
-
-            ViewBag.Products = new SelectList(_context.Products, "Id", "Name");
             return View(order);
         }
+
         public async Task<IActionResult> Delete(int id)
         {
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _orderService.GetOrderByIdAsync(id);
             if (order == null)
             {
                 return NotFound();
             }
+            return View(order);
+        }
 
-            _context.Orders.Remove(order);
-            await _context.SaveChangesAsync();
-            return RedirectToAction(nameof(Index));
+        [HttpPost, ActionName("Delete")]
+        public async Task<IActionResult> DeleteConfirmed(int id)
+        {
+            var result = await _orderService.DeleteOrderAsync(id);
+            if (result)
+            {
+                return RedirectToAction(nameof(Index));
+            }
+            return View();
         }
     }
 }

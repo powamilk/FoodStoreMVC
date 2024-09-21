@@ -1,60 +1,30 @@
-﻿@model FoodStoreMVC.Models.Order
+﻿@model Order
 
 @{
-    ViewData["Title"] = "Tạo Order";
+    ViewData["Title"] = "Tạo mới đơn hàng";
 }
 
-<h2>Create Order</h2>
+<h2>Tạo đơn hàng</h2>
 
-<form asp-action="Create" method="post">
+<form asp-action="Create">
     <div class="form-group">
-        <label asp-for="CustomerId" class="control-label"></label>
-        <input asp-for="CustomerId" class="form-control" />
+        <label for="CustomerId">Mã khách hàng</label>
+        <input type="number" class="form-control" id="CustomerId" asp-for="CustomerId" />
     </div>
     <div class="form-group">
-        <label asp-for="OrderDate" class="control-label"></label>
-        <input asp-for="OrderDate" class="form-control" value="@DateTime.Now.ToString("yyyy-MM-dd")" />
+        <label for="OrderDate">Ngày đặt hàng</label>
+        <input type="date" class="form-control" id="OrderDate" asp-for="OrderDate" />
     </div>
 
-    <h4>Order Items</h4>
-    <table class="table">
-        <thead>
-            <tr>
-                <th>Product</th>
-                <th>Quantity</th>
-            </tr>
-        </thead>
-        <tbody id="orderItems">
-            <tr>
-                <td>
-                    <select name="orderItems[0].ProductId" class="form-control" asp-items="ViewBag.Products"></select>
-                </td>
-                <td>
-                    <input name="orderItems[0].Quantity" type="number" class="form-control" />
-                </td>
-            </tr>
-        </tbody>
-    </table>
+    <div class="form-group">
+        <label>Chọn sản phẩm</label>
+        <select class="form-control" asp-items="ViewBag.Products" id="ProductId"></select>
+    </div>
 
-    <button type="button" id="addItem" class="btn btn-secondary">Add Item</button>
-    <button type="submit" class="btn btn-primary">Create</button>
+    <div class="form-group">
+        <label for="Quantity">Số lượng</label>
+        <input type="number" class="form-control" id="Quantity" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Tạo đơn hàng</button>
 </form>
-
-@section Scripts {
-    <script>
-        var index = 1;
-
-        $('#addItem').click(function() {
-            var row = `<tr>
-                            <td>
-                                <select name="orderItems[${index}].ProductId" class="form-control" asp-items="ViewBag.Products"></select>
-                            </td>
-                            <td>
-                                <input name="orderItems[${index}].Quantity" type="number" class="form-control" />
-                            </td>
-                        </tr>`;
-            $('#orderItems').append(row);
-            index++;
-        });
-    </script>
-}

@@ -1,23 +1,23 @@
-﻿@model FoodStoreMVC.Models.Product
+﻿@model Product
 
 @{
     ViewData["Title"] = "Xóa sản phẩm";
 }
 
-<h2>@ViewData["Title"]</h2>
+<h2>Xóa sản phẩm</h2>
 
-<h3>Bạn có chắc chắn muốn xóa sản phẩm này?</h3>
 <div>
-    <h4>@Model.Name</h4>
-    <dl class="dl-horizontal">
-        <dt>Giá</dt>
-        <dd>@Model.Price</dd>
-        <dt>Danh mục</dt>
-        <dd>@Model.Category.Name</dd>
-    </dl>
-</div>
+    <h4>Bạn có chắc chắn muốn xóa sản phẩm này?</h4>
+    <div>
+        <strong>Tên: </strong> @Model.Name
+    </div>
+    <div>
+        <strong>Giá: </strong> @Model.Price
+    </div>
 
-<form asp-action="Delete" method="post">
-    <input type="hidden" asp-for="Id" />
-    <button type="submit" class="btn btn-danger">Xóa</button>
-</form>
+    <form asp-action="Delete">
+        <input type="hidden" asp-for="Id" />
+        <button type="submit" class="btn btn-danger">Xóa</button>
+        <a asp-action="Index" class="btn btn-secondary">Hủy</a>
+    </form>
+</div>

@@ -2,48 +2,65 @@
 using FoodStoreMVC.Service.Interface;
 using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
+using Newtonsoft.Json;
+using System.Text;
 
 namespace FoodStoreMVC.Service.Implement
 {
     public class CategoryService : ICategoryService
     {
-        private readonly AppDbContext _context;
+        private readonly HttpClient _httpClient;
 
-        public CategoryService(AppDbContext context)
+        public CategoryService()
         {
-            _context = context;
+            _httpClient = new HttpClient
+            {
+                BaseAddress = new Uri("https://localhost:7077")
+            };
         }
 
         public async Task<List<Category>> GetAllCategoriesAsync()
         {
-            return await _context.Categories.ToListAsync();
+            var response = await _httpClient.GetAsync("api/categories");
+            if (response.IsSuccessStatusCode)
+            {
+                var json = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<List<Category>>(json);
+            }
+            return null;
         }
 
         public async Task<Category> GetCategoryByIdAsync(int id)
         {
-            return await _context.Categories.FindAsync(id);
-        }
-
-        public async Task CreateCategoryAsync(Category category)
-        {
-            _context.Categories.Add(category);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task UpdateCategoryAsync(Category category)
-        {
-            _context.Categories.Update(category);
-            await _context.SaveChangesAsync();
-        }
-
-        public async Task DeleteCategoryAsync(int id)
-        {
-            var category = await _context.Categories.FindAsync(id);
-            if (category != null)
+            var response = await _httpClient.GetAsync($"api/categories/{id}");
+            if (response.IsSuccessStatusCode)
             {
-                _context.Categories.Remove(category);
-                await _context.SaveChangesAsync();
+                var json = await response.Content.ReadAsStringAsync();
+                return JsonConvert.DeserializeObject<Category>(json);
             }
+            return null;
+        }
+
+        public async Task<bool> CreateCategoryAsync(Category category)
+        {
+            var json = JsonConvert.SerializeObject(category);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PostAsync("api/categories", content);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> UpdateCategoryAsync(Category category)
+        {
+            var json = JsonConvert.SerializeObject(category);
+            var content = new StringContent(json, Encoding.UTF8, "application/json");
+            var response = await _httpClient.PutAsync($"api/categories/{category.Id}", content);
+            return response.IsSuccessStatusCode;
+        }
+
+        public async Task<bool> DeleteCategoryAsync(int id)
+        {
+            var response = await _httpClient.DeleteAsync($"api/categories/{id}");
+            return response.IsSuccessStatusCode;
         }
     }
 }

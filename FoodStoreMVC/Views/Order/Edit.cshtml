@@ -1,66 +1,60 @@
-﻿@model FoodStoreMVC.Models.Order
+﻿@model Order
 
 @{
-    ViewData["Title"] = "Edit Order";
-    var orderItems = Model.OrderItems.ToList();
+    ViewData["Title"] = "Chỉnh sửa đơn hàng";
 }
 
-<h2>Edit Order</h2>
+<h2>Chỉnh sửa đơn hàng</h2>
 
-<form asp-action="Edit" method="post">
+<form asp-action="Edit">
     <input type="hidden" asp-for="Id" />
+
     <div class="form-group">
-        <label asp-for="CustomerId" class="control-label"></label>
-        <input asp-for="CustomerId" class="form-control" />
-    </div>
-    <div class="form-group">
-        <label asp-for="OrderDate" class="control-label"></label>
-        <input asp-for="OrderDate" class="form-control" />
+        <label for="CustomerId">Mã khách hàng</label>
+        <input type="number" class="form-control" id="CustomerId" asp-for="CustomerId" />
     </div>
 
-    <h4>Order Items</h4>
+    <div class="form-group">
+        <label for="OrderDate">Ngày đặt hàng</label>
+        <input type="date" class="form-control" id="OrderDate" asp-for="OrderDate" />
+    </div>
+
+    <h4>Chi tiết đơn hàng</h4>
     <table class="table">
         <thead>
             <tr>
-                <th>Product</th>
-                <th>Quantity</th>
+                <th>Tên sản phẩm</th>
+                <th>Số lượng</th>
+                <th>Giá</th>
+                <th>Thao tác</th>
             </tr>
         </thead>
-        <tbody id="orderItems">
-            @for (int i = 0; i < orderItems.Count; i++)
+        <tbody>
+            @foreach (var item in Model.OrderItems)
             {
                 <tr>
+                    <td>@item.Product.Name</td>
                     <td>
-                        <select name="orderItems[@i].ProductId" class="form-control" asp-items="ViewBag.Products"
-                                value="@orderItems[i].ProductId"></select>
+                        <input type="number" asp-for="@item.Quantity" class="form-control" />
                     </td>
+                    <td>@item.Product.Price</td>
                     <td>
-                        <input name="orderItems[@i].Quantity" type="number" class="form-control" value="@orderItems[i].Quantity" />
+                        <button type="button" class="btn btn-danger" asp-action="RemoveItem" asp-route-id="@item.Id">Xóa</button>
                     </td>
                 </tr>
             }
         </tbody>
     </table>
 
-    <button type="button" id="addItem" class="btn btn-secondary">Add Item</button>
-    <button type="submit" class="btn btn-primary">Save Changes</button>
+    <div class="form-group">
+        <label>Chọn sản phẩm mới</label>
+        <select class="form-control" asp-items="ViewBag.Products" id="ProductId"></select>
+    </div>
+
+    <div class="form-group">
+        <label for="Quantity">Số lượng</label>
+        <input type="number" class="form-control" id="Quantity" />
+    </div>
+
+    <button type="submit" class="btn btn-primary">Lưu thay đổi</button>
 </form>
-
-@section Scripts {
-    <script>
-        var index = @orderItems.Count;
-
-        $('#addItem').click(function () {
-            var row = `<tr>
-                                    <td>
-                                        <select name="orderItems[${index}].ProductId" class="form-control" asp-items="ViewBag.Products"></select>
-                                    </td>
-                                    <td>
-                                        <input name="orderItems[${index}].Quantity" type="number" class="form-control" />
-                                    </td>
-                                </tr>`;
-            $('#orderItems').append(row);
-            index++;
-        });
-    </script>
-}

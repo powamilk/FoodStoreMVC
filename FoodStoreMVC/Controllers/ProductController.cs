@@ -7,25 +7,28 @@ namespace FoodStoreMVC.Controllers
     public class ProductController : Controller
     {
         private readonly IProductService _productService;
-        private readonly ICategoryService _categoryService;
 
-        public ProductController(IProductService productService, ICategoryService categoryService)
+        public ProductController(IProductService productService)
         {
             _productService = productService;
-            _categoryService = categoryService;
         }
+
         public async Task<IActionResult> Index()
         {
             var products = await _productService.GetAllProductsAsync();
             return View(products);
         }
 
-        public async Task<IActionResult> Create()
+        public async Task<IActionResult> Details(int id)
         {
-            ViewBag.Categories = await _categoryService.GetAllCategoriesAsync();
-            return View();
+            var product = await _productService.GetProductByIdAsync(id);
+            return View(product);
         }
 
+        public IActionResult Create()
+        {
+            return View();
+        }
 
         [HttpPost]
         public async Task<IActionResult> Create(Product product)
@@ -35,18 +38,12 @@ namespace FoodStoreMVC.Controllers
                 await _productService.CreateProductAsync(product);
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Categories = await _categoryService.GetAllCategoriesAsync();
             return View(product);
         }
 
         public async Task<IActionResult> Edit(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
-            ViewBag.Categories = await _categoryService.GetAllCategoriesAsync();
             return View(product);
         }
 
@@ -58,16 +55,12 @@ namespace FoodStoreMVC.Controllers
                 await _productService.UpdateProductAsync(product);
                 return RedirectToAction(nameof(Index));
             }
-            ViewBag.Categories = await _categoryService.GetAllCategoriesAsync();
             return View(product);
         }
+
         public async Task<IActionResult> Delete(int id)
         {
             var product = await _productService.GetProductByIdAsync(id);
-            if (product == null)
-            {
-                return NotFound();
-            }
             return View(product);
         }
 

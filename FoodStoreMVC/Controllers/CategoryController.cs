@@ -16,13 +16,14 @@ namespace FoodStoreMVC.Controllers
         public async Task<IActionResult> Index()
         {
             var categories = await _categoryService.GetAllCategoriesAsync();
-            if (categories == null || !categories.Any())
-            {
-                ViewBag.Message = "Không có dữ liệu để hiển thị.";
-            }
             return View(categories);
         }
 
+        public async Task<IActionResult> Details(int id)
+        {
+            var category = await _categoryService.GetCategoryByIdAsync(id);
+            return View(category);
+        }
 
         public IActionResult Create()
         {
@@ -35,7 +36,7 @@ namespace FoodStoreMVC.Controllers
             if (ModelState.IsValid)
             {
                 await _categoryService.CreateCategoryAsync(category);
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             return View(category);
         }
@@ -43,10 +44,6 @@ namespace FoodStoreMVC.Controllers
         public async Task<IActionResult> Edit(int id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
             return View(category);
         }
 
@@ -56,7 +53,7 @@ namespace FoodStoreMVC.Controllers
             if (ModelState.IsValid)
             {
                 await _categoryService.UpdateCategoryAsync(category);
-                return RedirectToAction("Index");
+                return RedirectToAction(nameof(Index));
             }
             return View(category);
         }
@@ -64,10 +61,6 @@ namespace FoodStoreMVC.Controllers
         public async Task<IActionResult> Delete(int id)
         {
             var category = await _categoryService.GetCategoryByIdAsync(id);
-            if (category == null)
-            {
-                return NotFound();
-            }
             return View(category);
         }
 
@@ -75,7 +68,7 @@ namespace FoodStoreMVC.Controllers
         public async Task<IActionResult> DeleteConfirmed(int id)
         {
             await _categoryService.DeleteCategoryAsync(id);
-            return RedirectToAction("Index");
+            return RedirectToAction(nameof(Index));
         }
     }
 }
